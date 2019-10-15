@@ -67,7 +67,7 @@ void CheckTrafficLight()
 
 
 int main(void) {
-
+   cout << "Number of Physical cores " << thread::hardware_concurrency() << endl;
    pthread_t thread1 , thread2, thread3, thread4;
    int rc;
    int i;
