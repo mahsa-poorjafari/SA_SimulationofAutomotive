@@ -41,6 +41,7 @@ int autoAlarmSound = 0;
 int autoBrake = 0;
 int autoSpeed = 0;
 int speedSign = 0;
+int gearLevers = 0;
 
 int FrontTopSensorsA = 0;
 int FrontTopSensorsB = 0;
@@ -67,92 +68,155 @@ int RightBackSensorsA = 0;
 int RightBackSensorsB = 0;
 int RightBackSensorsC = 0;
 
+
 // Function declarations
-void sensorsRandomValue(int);
-void stop();
+void *sensorsRandomValue(int);
+void *stop();
 void brake();
-void fasterSpeed();
-void ringTheAlarm();
+void *fasterSpeed();
+void *ringTheAlarm();
 void readStreetSigns();
-void getSpeedSign();
+void *getSpeedSign();
 void readTraficLight();
+void goBack();
 
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t con = PTHREAD_COND_INITIALIZER;
-
 
 
 // CheckObstacleBack 8 sides
 void *CheckObstacleFrontTop()
 {
 	printf("\n This is CheckObstacleFrontTop Function");
+	pthread_t threadChObFT[4];
+	int rc[4];
 	pthread_mutex_lock(&lock);	
 	autoSide = 1;
 	//Random values for sensors 0 or 10
-	sensorsRandomValue(autoSide);
+	rc[0] = pthread_create(&threadChObFT[0], NULL, sensorsRandomValue(autoSide), NULL);
+	
+	//sensorsRandomValue(autoSide);
 	
 	if (FrontTopSensorsA < 20 && FrontTopSensorsB < 20 && FrontTopSensorsC < 20){
-		stop();
+		rc[1] = pthread_create(&threadChObFT[1], NULL, stop, NULL);
+		//stop();
 	}else if (FrontTopSensorsA < 30 || FrontTopSensorsB < 30 || FrontTopSensorsC < 30){
 		alarmOn = true;
-		ringTheAlarm();	
+		rc[2] = pthread_create(&threadChObFT[2], NULL, ringTheAlarm, NULL);
+		//ringTheAlarm();	
 	}else{
-		fasterSpeed();
+		rc[3] = pthread_create(&threadChObFT[3], NULL, fasterSpeed, NULL);
+		//fasterSpeed();
 	}
 	pthread_mutex_unlock(&lock);
+	for (int i = 0; i < 4; i++){
+		if (rc[i]) {
+		 printf("\n Error in creation of thread %d.\n", i);
+		 exit(-1);
+		}
+	}
+	for (int j = 0; j < 4; ++j){
+		pthread_join(threadChObFT[j],NULL);
+	}
 
 }
 
 void *CheckObstacleBackBottom()
 {
 	printf("\n This is CheckObstacleBackBottom Function");
+	pthread_t threadChObBB[4];
+	int rc[4];
 	pthread_mutex_lock(&lock);
 	autoSide = 3;
-	sensorsRandomValue(autoSide);
+	//sensorsRandomValue(autoSide);
+	rc[0] = pthread_create(&threadChObBB[0], NULL, sensorsRandomValue(autoSide), NULL);
+	
 	if (BackBottomSensorsA < 20 && BackBottomSensorsB < 20 && BackBottomSensorsC < 20){
-		stop();
+		rc[1] = pthread_create(&threadChObBB[1], NULL, stop, NULL);
+		//stop();
 	}else if (BackBottomSensorsA < 30 || BackBottomSensorsB < 30 || BackBottomSensorsC < 30){
 		alarmOn = true;
-		ringTheAlarm();	
+		rc[2] = pthread_create(&threadChObBB[2], NULL, ringTheAlarm, NULL);
+		//ringTheAlarm();	
 	}else{
-		fasterSpeed();
+		rc[3] = pthread_create(&threadChObBB[3], NULL, fasterSpeed, NULL);
+		//fasterSpeed();
 	}
 	
 	pthread_mutex_unlock(&lock);
+	for (int i = 0; i < 4; i++){
+		if (rc[i]) {
+		 printf("\n Error in creation of thread %d.\n", i);
+		 exit(-1);
+		}
+	}
+	for (int j = 0; j < 4; ++j){
+		pthread_join(threadChObBB[j],NULL);
+	}
 
 }
 void *CheckObstacleFrontBottom()
 {
 	printf("\n This is CheckObstacleFrontBottom Function");
+	pthread_t threadChObFB[4];
+	int rc[4];
 	pthread_mutex_lock(&lock);
 	autoSide = 2;
-	sensorsRandomValue(autoSide);
+	rc[0] = pthread_create(&threadChObFB[0], NULL, sensorsRandomValue(autoSide), NULL);
+	//sensorsRandomValue(autoSide);
 	if (FrontBottomSensorsA < 20 && FrontBottomSensorsB < 20 && FrontBottomSensorsC < 20){
-		stop();
+		rc[1] = pthread_create(&threadChObFB[1], NULL, stop, NULL);
+		//stop();
 	}else if (FrontBottomSensorsA < 30 || FrontBottomSensorsB < 30 || FrontBottomSensorsC < 30){
 		alarmOn = true;
-		ringTheAlarm();	
+		rc[2] = pthread_create(&threadChObFB[2], NULL, ringTheAlarm, NULL);
+		//ringTheAlarm();	
 	}else{
-		fasterSpeed();
+		rc[3] = pthread_create(&threadChObFB[3], NULL, fasterSpeed, NULL);
+		//fasterSpeed();
 	}
 	pthread_mutex_unlock(&lock);
+	for (int i = 0; i < 4; i++){
+		if (rc[i]) {
+		 printf("\n Error in creation of thread %d.\n", i);
+		 exit(-1);
+		}
+	}
+	for (int j = 0; j < 4; ++j){
+		pthread_join(threadChObFB[j],NULL);
+	}
 
 }
 void *CheckObstacleBackTop()
 {
 	printf("\n This is CheckObstacleBackTop Function");
+	pthread_t threadChObBT[4];
+	int rc[4];
 	pthread_mutex_lock(&lock);
 	autoSide = 4;
-	sensorsRandomValue(autoSide);
+	rc[0] = pthread_create(&threadChObBT[0], NULL, sensorsRandomValue(autoSide), NULL);
+	//sensorsRandomValue(autoSide);
 	if (BackTopSensorsA < 20 && BackTopSensorsB < 20 && BackTopSensorsC < 20){
-		stop();
+		rc[1] = pthread_create(&threadChObBT[1], NULL, stop, NULL);
+		//stop();
 	}else if (BackTopSensorsA < 30 || BackTopSensorsB < 30 || BackTopSensorsC < 30){
 		alarmOn = true;
-		ringTheAlarm();	
+		rc[2] = pthread_create(&threadChObBT[2], NULL, ringTheAlarm, NULL);
+		//ringTheAlarm();	
 	}else{
-		fasterSpeed();
+		rc[3] = pthread_create(&threadChObBT[3], NULL, fasterSpeed, NULL);
+		//fasterSpeed();
 	}
 	pthread_mutex_unlock(&lock);
+	for (int i = 0; i < 4; i++){
+		if (rc[i]) {
+		 printf("\n Error in creation of thread %d.\n", i);
+		 exit(-1);
+		}
+	}
+	for (int j = 0; j < 4; ++j){
+		pthread_join(threadChObBT[j],NULL);
+	}
 
 }
 void *CheckObstacleLeftFront()
@@ -230,44 +294,77 @@ void *CheckObstacleRightBack()
 void *readStreetSignsFront()
 {
 	printf("\n This is readStreetSignsFront Function");
+	pthread_t speedThread;
+	int rc;
 	pthread_mutex_lock(&lock);
-	getSpeedSign();
+	rc = pthread_create(&speedThread, NULL, getSpeedSign, NULL);
+	//getSpeedSign();
 	varD = varC + 6;
+	speedSign = 50;
 	pthread_mutex_unlock(&lock);
+	if (rc) {
+		printf("Error in thread readStreetSignsFront creation.\n");
+		exit(-1);
+	 }
+	 pthread_join(speedThread,NULL);
 
 }
 void *readStreetSignsBack()
 {
 	printf("\n This is readStreetSignsBack Function");
+	pthread_t speedThread;
+	int rc;
 	pthread_mutex_lock(&lock);
-	getSpeedSign();
+	//getSpeedSign();
+	rc = pthread_create(&speedThread, NULL, getSpeedSign, NULL);
 	varD = varA + 5;
 	pthread_mutex_unlock(&lock);
+	if (rc) {
+		printf("Error in thread readStreetSignsBack creation.\n");
+		exit(-1);
+	 }
+	 pthread_join(speedThread,NULL);
 
 }
 void *readStreetSignsLeft()
 {
 	printf("\n This is readStreetSignsLeft Function");
+	pthread_t speedThread;
+	int rc;
 	pthread_mutex_lock(&lock);
-	getSpeedSign();
+	// getSpeedSign();
+	rc = pthread_create(&speedThread, NULL, getSpeedSign, NULL);
 	varD = varB + 3;
 	pthread_mutex_unlock(&lock);
+	if (rc) {
+		printf("Error in thread readStreetSignsBack creation.\n");
+		exit(-1);
+	 }
+	 pthread_join(speedThread,NULL);
 
 }
 void *readStreetSignsRight()
 {
 	printf("\n This is readStreetSignsRight Function");
+	pthread_t speedThread;
+	int rc;
 	pthread_mutex_lock(&lock);
-	getSpeedSign();
+	//getSpeedSign();
+	rc = pthread_create(&speedThread, NULL, getSpeedSign, NULL);
 	varD = varC + 4;
+	speedSign = 10;
 	pthread_mutex_unlock(&lock);
+	if (rc) {
+		printf("Error in thread readStreetSignsBack creation.\n");
+		exit(-1);
+	 }
+	 pthread_join(speedThread,NULL);
 
 }
 
-
 void *goFurther()
 {
-	printf("\n This is goFurther Function \n");
+	printf("\n This is goFurther Function \n");	
 	pthread_mutex_lock(&lock);
 	autoSpeed = 20;
 	printf("speedSign is %d in goFurther Function 1", speedSign);
@@ -284,6 +381,7 @@ void *goFurther()
 void *CheckTrafficLight()
 {
 	printf("\n This is CheckTrafficLight Function \n");
+	autoSpeed = 5;
 	readTraficLight();
 
 }
@@ -291,13 +389,12 @@ void *CheckTrafficLight()
 int main(void) {
 	// numofcpus = sysconf(_SC_NPROCESSORS_ONLN);	
 	printf("sysconf %d \n", numofcpus);
-	int numOfThread = numofcpus * 10;
+	int numOfThread = 15;
 	printf("numOfThread %d", numOfThread); 
 	pthread_t threads[numOfThread];
 	int rc;
 	int CheckObstacleRc [10];
-	int streetSignsRc [5];
-	int i;
+	int streetSignsRc [5];	
 	pthread_mutex_init(&mutex1, NULL);
 	pthread_mutex_init(&mutex2, NULL);
 	
@@ -349,7 +446,9 @@ int main(void) {
 }
 
 
-void sensorsRandomValue(int side){
+void *sensorsRandomValue(int side){
+	printf("\n This is sensorsRandomValue Function");
+	printf("\n side is %d in sensorsRandomValue \n", side);
 	pthread_mutex_lock(&lock);
 	switch(side) {
 		case 1:							
@@ -421,8 +520,9 @@ void sensorsRandomValue(int side){
 	}	
 	pthread_mutex_unlock(&lock);
 }
-void stop()
+void *stop()
 {
+	gearLevers = 1;
 	printf("\n This is stop Function \n");
 	brake();
 
@@ -436,7 +536,7 @@ void brake()
 
 }
 
-void getSpeedSign()
+void *getSpeedSign()
 {
 	printf("\n This is readStreetSigns Function \n");
 	//pthread_mutex_lock(&lock);		
@@ -444,7 +544,7 @@ void getSpeedSign()
 	//pthread_mutex_unlock(&lock);
 }
 
-void fasterSpeed()
+void *fasterSpeed()
 {
 	printf("\n This is fasterSpeed Function \n");
 	varA = 2;
@@ -452,12 +552,14 @@ void fasterSpeed()
 	varD = varC * 2;	 
 	pthread_mutex_lock(&lock);
 	autoSpeed = speedSign - varD;
+	gearLevers = 3;
+	gearLevers = gearLevers + 1;
 	printf("\n autoSpeed is %d in fasterSpeed", autoSpeed);
 	pthread_mutex_unlock(&lock);	
 
 }
 
-void ringTheAlarm(){
+void *ringTheAlarm(){
 	if (alarmOn){
 		autoAlarmSound = 1;
 		printf("\n ALARM => B_______________EEEEEEEEE___________B \n");		
@@ -471,9 +573,21 @@ void slowDown()
 	pthread_mutex_lock(&lock);
 	autoSpeed = autoSpeed - 20;
 	varD = varD - 3;
+	gearLevers = 1;
 	pthread_mutex_unlock(&lock);
 
 }
+
+void goBack()
+{
+	printf("\n This is goBack Function");
+	pthread_mutex_lock(&lock);
+	autoSpeed = autoSpeed - 20;
+	gearLevers = -1;
+	pthread_mutex_unlock(&lock);
+
+}
+
 void readTraficLight(){
 	pthread_mutex_lock(&lock);
 	lightColor = rand() % 3;
